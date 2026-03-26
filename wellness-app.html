@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Véronique — Mon Programme</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+
+  :root {
+    --bg: #0f0e0c;
+    --card: #1a1916;
+    --card2: #211f1b;
+    --border: #2e2b25;
+    --gold: #c9a96e;
+    --gold-light: #e8d5aa;
+    --cream: #f0e8d8;
+    --text: #d4ccbe;
+    --muted: #7a7367;
+    --green: #6b8f6b;
+    --red: #9b4a4a;
+    --orange: #c97b3a;
+    --radius: 12px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    font-size: 14px;
+  }
+
+  /* ─── HEADER ─── */
+  header {
+    padding: 24px 20px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 100;
+  }
+  .logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--gold-light);
+    letter-spacing: 0.04em;
+  }
+  .logo span { font-style: italic; color: var(--gold); }
+  .today-pill {
+    font-size: 11px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 12px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    display: flex;
+    overflow-x: auto;
+    gap: 4px;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  .nav-btn {
+    flex-shrink: 0;
+    padding: 7px 16px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .nav-btn.active, .nav-btn:hover {
+    background: var(--gold);
+    color: var(--bg);
+    border-color: var(--gold);
+    font-weight: 500;
+  }
+
+  /* ─── SECTIONS ─── */
+  .section { display: none; padding: 20px; }
+  .section.active { display: block; }
+
+  /* ─── CARDS ─── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-bottom: 14px;
+  }
+  .card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    font-weight: 400;
+    color: var(--gold-light);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-title .icon { font-size: 16px; }
+
+  /* ─── DASHBOARD ─── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .stat-box {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 30px;
+    font-weight: 300;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .stat-unit { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .stat-label { font-size: 11px; color: var(--muted); margin-top: 6px; letter-spacing: 0.05em; text-transform: uppercase; }
+
+  .progress-bar-wrap {
+    background: var(--card2);
+    border-radius: 6px;
+    height: 8px;
+    overflow: hidden;
+    margin-top: 6px;
+  }
+  .progress-bar {
+    height: 100%;
+    border-radius: 6px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    transition: width 0.6s ease;
+  }
+
+  /* ─── POIDS ─── */
+  .input-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .input-group { display: flex; flex-direction: column; gap: 5px; }
+  .input-group label { font-size: 11px; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; }
+  .input-group input {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+  .input-group input:focus { border-color: var(--gold); }
+  .btn-primary {
+    width: 100%;
+    padding: 12px;
+    background: var(--gold);
+    color: var(--bg);
+    border: none;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: opacity 0.2s;
+  }
+  .btn-primary:hover { opacity: 0.88; }
+
+  .history-list { margin-top: 14px; }
+  .history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .history-item:last-child { border-bottom: none; }
+  .history-date { font-size: 12px; color: var(--muted); }
+  .history-vals { display: flex; gap: 14px; align-items: center; }
+  .history-weight { font-family: 'Cormorant Garamond', serif; font-size: 18px; color: var(--gold); }
+  .history-measures { font-size: 11px; color: var(--muted); }
+  .del-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 4px;
+    transition: color 0.2s;
+  }
+  .del-btn:hover { color: var(--red); }
+
+  /* ─── MENUS ─── */
+  .menu-controls {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .btn-secondary {
+    padding: 9px 16px;
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .btn-secondary:hover { background: var(--gold); color: var(--bg); }
+
+  .meal-card {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 10px;
+  }
+  .meal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
+  .meal-num {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .meal-badge {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: rgba(201,169,110,0.15);
+    color: var(--gold);
+    letter-spacing: 0.04em;
+  }
+  .meal-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    color: var(--cream);
+    margin-bottom: 6px;
+  }
+  .meal-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  .courses-list { margin-top: 8px; }
+  .course-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .course-item:last-child { border-bottom: none; }
+  .course-item input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--gold);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .course-item.checked span { text-decoration: line-through; color: var(--muted); }
+  .course-qty { color: var(--muted); font-size: 11px; min-width: 40px; }
+
+  /* ─── ENTRAINEMENT ─── */
+  .day-selector {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+  .day-btn {
+    aspect-ratio: 1;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+  }
+  .day-btn .day-name { font-size: 9px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .day-btn.done { background: rgba(107,143,107,0.2); border-color: var(--green); color: var(--green); }
+  .day-btn.today { border-color: var(--gold); color: var(--gold); }
+
+  .exercise-item {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 8px;
+    transition: border-color 0.2s;
+  }
+  .exercise-item.done-ex { border-color: var(--green); }
+  .ex-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .ex-check {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: transparent;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    color: transparent;
+    font-size: 11px;
+  }
+  .exercise-item.done-ex .ex-check { background: var(--green); border-color: var(--green); color: white; }
+  .ex-name { font-family: 'Cormorant Garamond', serif; font-size: 15px; color: var(--cream); }
+  .ex-target { font-size: 11px; color: var(--muted); margin-left: auto; }
+  .ex-sets {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .ex-sets input {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 7px 10px;
+    color: var(--cream);
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    -webkit-appearance: none;
+  }
+  .ex-sets input:focus { border-color: var(--gold); }
+  .ex-sets label { font-size: 10px; color: var(--muted); display: block; margin-bottom: 3px; letter-spacing: 0.05em; text-transform: uppercase; }
+
+  .session-meta {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .session-meta .input-group { flex: 1; }
+
+  .save-session-btn {
+    width: 100%;
+    padding: 13px;
+    background: var(--green);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 14px;
+    letter-spacing: 0.04em;
+    transition: opacity 0.2s;
+  }
+  .save-session-btn:hover { opacity: 0.85; }
+
+  .sessions-history { margin-top: 4px; }
+  .session-entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .session-entry:last-child { border-bottom: none; }
+  .session-date { font-size: 12px; color: var(--muted); }
+  .session-info { text-align: right; }
+  .session-duration { font-family: 'Cormorant Garamond', serif; font-size: 16px; color: var(--gold); }
+  .session-exs { font-size: 11px; color: var(--muted); }
+
+  /* ─── ENERGIE ─── */
+  .energy-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .energy-label { font-size: 12px; color: var(--muted); margin-bottom: 8px; text-align: center; }
+  .stars {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+  }
+  .star {
+    font-size: 22px;
+    cursor: pointer;
+    opacity: 0.3;
+    transition: opacity 0.15s, transform 0.15s;
+    line-height: 1;
+  }
+  .star.active { opacity: 1; }
+  .star:hover { transform: scale(1.2); }
+
+  .tag {
+    display: inline-block;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 10px;
+    margin: 3px 2px;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    transition: all 0.2s;
+    color: var(--muted);
+  }
+  .tag.active { background: rgba(201,169,110,0.2); border-color: var(--gold); color: var(--gold); }
+
+  /* ─── TOAST ─── */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(60px);
+    background: var(--green);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: transform 0.3s ease;
+    z-index: 999;
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 380px) {
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .input-row { grid-template-columns: 1fr; }
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 30px 20px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .empty-state .icon { font-size: 32px; margin-bottom: 10px; display: block; }
+
+  .aliment-tag {
+    display: inline-block;
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 8px;
+    margin: 2px;
+    background: rgba(201,169,110,0.1);
+    color: var(--gold);
+    border: 1px solid rgba(201,169,110,0.2);
+  }
+
+  select {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+    width: 100%;
+    -webkit-appearance: none;
+    cursor: pointer;
+  }
+
+  textarea {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    outline: none;
+    width: 100%;
+    resize: vertical;
+    min-height: 70px;
+    line-height: 1.5;
+  }
+  textarea:focus { border-color: var(--gold); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Mon <span>Programme</span></div>
+  <div class="today-pill" id="today-date"></div>
+</header>
+
+<nav>
+  <button class="nav-btn active" onclick="showSection('dashboard')">Tableau de bord</button>
+  <button class="nav-btn" onclick="showSection('poids')">Poids & Mesures</button>
+  <button class="nav-btn" onclick="showSection('menus')">Menus & Courses</button>
+  <button class="nav-btn" onclick="showSection('training')">Entraînement</button>
+  <button class="nav-btn" onclick="showSection('energie')">Énergie</button>
+</nav>
+
+<!-- ═══ DASHBOARD ═══ -->
+<div class="section active" id="dashboard">
+  <div class="card">
+    <div class="card-title"><span class="icon">⚖️</span> Progression poids</div>
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-num" id="dash-poids-actuel">—</div>
+        <div class="stat-unit">kg</div>
+        <div class="stat-label">Poids actuel</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="dash-poids-perdu">—</div>
+        <div class="stat-unit">kg perdus</div>
+        <div class="stat-label">Depuis le début</div>
+      </div>
+    </div>
+    <div style="margin-bottom:6px; font-size:12px; color:var(--muted); display:flex; justify-content:space-between;">
+      <span>Objectif : 63 kg</span>
+      <span id="dash-reste">— kg restants</span>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar" id="dash-progress" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">💪</span> Activité cette semaine</div>
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-num" id="dash-seances">0</div>
+        <div class="stat-unit">/ 3 séances</div>
+        <div class="stat-label">Semaine en cours</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="dash-total-seances">0</div>
+        <div class="stat-unit">séances</div>
+        <div class="stat-label">Total depuis début</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">✨</span> Énergie & Sommeil</div>
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-num" id="dash-energie">—</div>
+        <div class="stat-unit">/ 5</div>
+        <div class="stat-label">Énergie hier</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="dash-sommeil">—</div>
+        <div class="stat-unit">/ 5</div>
+        <div class="stat-label">Sommeil hier</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ POIDS & MESURES ═══ -->
+<div class="section" id="poids">
+  <div class="card">
+    <div class="card-title"><span class="icon">📊</span> Saisir ma pesée</div>
+    <div class="input-row">
+      <div class="input-group">
+        <label>Date</label>
+        <input type="date" id="poids-date">
+      </div>
+      <div class="input-group">
+        <label>Poids (kg)</label>
+        <input type="number" id="poids-val" placeholder="ex: 70.2" step="0.1" min="40" max="150">
+      </div>
+    </div>
+    <div class="input-row">
+      <div class="input-group">
+        <label>Tour de taille (cm)</label>
+        <input type="number" id="taille-val" placeholder="ex: 78" step="0.5">
+      </div>
+      <div class="input-group">
+        <label>Hanches (cm)</label>
+        <input type="number" id="hanches-val" placeholder="ex: 100" step="0.5">
+      </div>
+    </div>
+    <div class="input-row">
+      <div class="input-group">
+        <label>Cuisses (cm)</label>
+        <input type="number" id="cuisses-val" placeholder="ex: 60" step="0.5">
+      </div>
+      <div class="input-group">
+        <label>Note (optionnel)</label>
+        <input type="text" id="poids-note" placeholder="ex: jour de règles">
+      </div>
+    </div>
+    <button class="btn-primary" onclick="savePoids()">Enregistrer</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📋</span> Historique</div>
+    <div class="history-list" id="poids-history">
+      <div class="empty-state">
+        <span class="icon">🌿</span>
+        Aucune entrée pour l'instant.<br>Commence ta première pesée ci-dessus.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MENUS & COURSES ═══ -->
+<div class="section" id="menus">
+  <div class="card">
+    <div class="card-title"><span class="icon">🍽️</span> Menus de la semaine</div>
+    <div class="menu-controls">
+      <button class="btn-primary" style="flex:1" onclick="generateMenus()">✨ Générer 10 repas</button>
+      <button class="btn-secondary" onclick="showCourses()">🛒 Liste de courses</button>
+    </div>
+    <div id="menus-list">
+      <div class="empty-state">
+        <span class="icon">🌿</span>
+        Clique sur "Générer 10 repas" pour obtenir<br>tes menus de la semaine.
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="courses-card" style="display:none">
+    <div class="card-title"><span class="icon">🛒</span> Liste de courses</div>
+    <div id="courses-list"></div>
+  </div>
+</div>
+
+<!-- ═══ ENTRAÎNEMENT ═══ -->
+<div class="section" id="training">
+  <div class="card">
+    <div class="card-title"><span class="icon">🗓️</span> Cette semaine</div>
+    <div class="day-selector" id="week-days"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">💪</span> Séance du jour</div>
+    <div class="session-meta">
+      <div class="input-group" style="flex:1">
+        <label>Date</label>
+        <input type="date" id="session-date">
+      </div>
+      <div class="input-group" style="flex:1">
+        <label>Durée (min)</label>
+        <input type="number" id="session-duration" placeholder="ex: 65" min="10" max="180">
+      </div>
+    </div>
+
+    <div id="exercises-list"></div>
+
+    <div class="input-group" style="margin-top:10px">
+      <label>Notes séance</label>
+      <textarea id="session-notes" placeholder="Ressenti, douleurs éventuelles, observations..."></textarea>
+    </div>
+
+    <button class="save-session-btn" onclick="saveSession()">✓ Enregistrer la séance</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📋</span> Historique séances</div>
+    <div id="sessions-history">
+      <div class="empty-state">
+        <span class="icon">🏋️</span>
+        Aucune séance enregistrée.<br>Ta première séance était le 25 mars !
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ENERGIE ═══ -->
+<div class="section" id="energie">
+  <div class="card">
+    <div class="card-title"><span class="icon">✨</span> Comment je me sens</div>
+    <div class="input-group" style="margin-bottom:14px">
+      <label>Date</label>
+      <input type="date" id="energie-date">
+    </div>
+
+    <div class="energy-grid">
+      <div>
+        <div class="energy-label">Énergie ☀️</div>
+        <div class="stars" id="stars-energie">
+          <span class="star" onclick="setStar('energie',1)">★</span>
+          <span class="star" onclick="setStar('energie',2)">★</span>
+          <span class="star" onclick="setStar('energie',3)">★</span>
+          <span class="star" onclick="setStar('energie',4)">★</span>
+          <span class="star" onclick="setStar('energie',5)">★</span>
+        </div>
+        <div id="val-energie" style="text-align:center;font-size:11px;color:var(--muted);margin-top:4px">—</div>
+      </div>
+      <div>
+        <div class="energy-label">Sommeil 🌙</div>
+        <div class="stars" id="stars-sommeil">
+          <span class="star" onclick="setStar('sommeil',1)">★</span>
+          <span class="star" onclick="setStar('sommeil',2)">★</span>
+          <span class="star" onclick="setStar('sommeil',3)">★</span>
+          <span class="star" onclick="setStar('sommeil',4)">★</span>
+          <span class="star" onclick="setStar('sommeil',5)">★</span>
+        </div>
+        <div id="val-sommeil" style="text-align:center;font-size:11px;color:var(--muted);margin-top:4px">—</div>
+      </div>
+    </div>
+
+    <div style="margin: 14px 0 8px; font-size:11px; color:var(--muted); letter-spacing:0.05em; text-transform:uppercase;">Humeur du jour</div>
+    <div id="humeur-tags">
+      <span class="tag" onclick="toggleTag(this)">😊 Légère</span>
+      <span class="tag" onclick="toggleTag(this)">💪 Motivée</span>
+      <span class="tag" onclick="toggleTag(this)">😴 Fatiguée</span>
+      <span class="tag" onclick="toggleTag(this)">😤 Stressée</span>
+      <span class="tag" onclick="toggleTag(this)">🌸 Sereine</span>
+      <span class="tag" onclick="toggleTag(this)">🔥 En forme</span>
+      <span class="tag" onclick="toggleTag(this)">🤕 Courbatures</span>
+      <span class="tag" onclick="toggleTag(this)">💭 Dispersée</span>
+    </div>
+
+    <div class="input-group" style="margin-top:14px">
+      <label>Note libre</label>
+      <textarea id="energie-note" placeholder="Ex: bien dormi, genou OK, bonne séance..."></textarea>
+    </div>
+
+    <button class="btn-primary" style="margin-top:12px" onclick="saveEnergie()">Enregistrer</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📊</span> Derniers 7 jours</div>
+    <div id="energie-history">
+      <div class="empty-state"><span class="icon">💫</span>Commence à noter ton énergie chaque jour.</div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">Enregistré ✓</div>
+
+<script>
+// ─── DATA ───
+let state = {
+  poids: [],
+  sessions: [],
+  energie: [],
+  currentMenus: [],
+  stars: { energie: 0, sommeil: 0 }
+};
+
+// ─── ALIMENTS METABOLIQUES ───
+const ALIMENTS = {
+  legumes: ['épinards', 'brocoli', 'concombre', 'oignons', 'aubergine', 'artichaut', 'ail', 'carottes crues', 'haricots verts', 'petits pois', 'courgette', 'champignons', 'poivron', 'tomates', 'laitue'],
+  fruits: ['avocats', 'olives', 'cerises', 'fraises', 'framboises', 'pamplemousse', 'oranges', 'pommes', 'prunes'],
+  proteines: ['saumon', 'sardines', 'maquereau', 'anchois', 'poulet', 'œufs', 'tofu'],
+  cereales: ['riz basmati complet', 'flocons d\'avoine', 'pain sarrasin', 'quinoa', 'pâtes al dente', 'patate douce'],
+  legumineuses: ['lentilles vertes', 'pois chiches', 'lentilles brunes'],
+  oleagineux: ['amandes', 'noix', 'noisettes', 'pistaches', 'graines de lin', 'graines de chia'],
+  laitiers: ['yaourt nature', 'fromage blanc en faisselle'],
+  huiles: ['huile d\'olive', 'huile de lin (crue)', 'huile de noix (crue)'],
+};
+
+const RECETTES = [
+  { name: 'Saumon grillé au quinoa & légumes', type: 'Plat', desc: 'Saumon + brocoli + haricots verts + quinoa. Citron, herbes fraîches.', courses: [['saumon (1 filet)','1'], ['quinoa','80g'], ['brocoli','1/2'], ['haricots verts','100g'], ['citron','1']] },
+  { name: 'Curry de pois chiches & épinards', type: 'Plat', desc: 'Pois chiches + épinards + lait de coco + curcuma, cumin, ail. Sur riz basmati.', courses: [['pois chiches cuits','200g'], ['épinards frais','2 poignées'], ['lait de coco','12cl'], ['riz basmati complet','80g'], ['curcuma, cumin','qsp']] },
+  { name: 'Poulet grillé & chou-fleur rôti', type: 'Plat', desc: 'Poitrine de poulet marinée citron-thym + chou-fleur râpé sauté ail + légumes rôtis.', courses: [['poulet (poitrine)','1'], ['chou-fleur','1/2'], ['carottes','2'], ['courgette','1'], ['thym, romarin','qsp']] },
+  { name: 'Salade de concombre & carottes à la menthe', type: 'Entrée', desc: 'Concombre + carottes + menthe fraîche + vinaigre de riz + sésame.', courses: [['concombre','1'], ['carottes','2'], ['menthe fraîche','1 botte'], ['graines de sésame','1 cs']] },
+  { name: 'Omelette aux épinards & champignons', type: 'Plat', desc: 'Œufs + épinards + champignons sautés à l\'huile d\'olive. Simple et protéiné.', courses: [['œufs','3'], ['épinards','1 poignée'], ['champignons','100g']] },
+  { name: 'Taboulé sans gluten au persil', type: 'Plat', desc: 'Quinoa + persil + menthe + tomates + concombre + citron + huile d\'olive.', courses: [['quinoa','100g'], ['persil','1 gros bouquet'], ['tomates','2'], ['concombre','1/2'], ['citron','1']] },
+  { name: 'Sardines en papillote & légumes méditerranéens', type: 'Plat', desc: 'Sardines fraîches ou filets + tomates + olives + oignon + herbes. En papillote.', courses: [['sardines','200g'], ['tomates','2'], ['olives noires','1 poignée'], ['oignon rouge','1']] },
+  { name: 'Bol de lentilles aux carottes & cumin', type: 'Plat', desc: 'Lentilles vertes + carottes cuites + cumin + huile d\'olive + citron.', courses: [['lentilles vertes','150g'], ['carottes','3'], ['cumin','1 cc']] },
+  { name: 'Smoothie détox vert + Yaourt lin & baies', type: 'Petit-déj', desc: 'Smoothie : épinards + pomme + citron + chia. Yaourt nature + baies + graines de lin moulues.', courses: [['épinards','1 poignée'], ['pomme verte','1/2'], ['yaourt nature','150g'], ['graines de lin','1 cs'], ['fraises ou framboises','1 poignée']] },
+  { name: 'Houmous maison & crudités', type: 'Entrée', desc: 'Pois chiches + tahini + citron + ail. Carottes, concombre, poivron en bâtonnets.', courses: [['pois chiches cuits','1 boîte'], ['tahini','2 cs'], ['citron','1'], ['légumes crus variés','assortiment']] },
+  { name: 'Maquereau & salade d\'épinards aux noix', type: 'Plat', desc: 'Maquereau en conserve ou frais + épinards frais + noix + vinaigrette huile de lin.', courses: [['maquereau','1 boîte'], ['épinards','2 poignées'], ['noix','1 poignée']] },
+  { name: 'Tofu sauté au brocoli & champignons', type: 'Plat', desc: 'Tofu ferme doré + brocoli + champignons + gingembre + sauce soja faible sodium.', courses: [['tofu ferme','200g'], ['brocoli','1/2'], ['champignons','100g'], ['gingembre','1 morceau']] },
+];
+
+const EXERCISES = [
+  { name: 'Presse à cuisses', target: '3 séries × 12-15 rép', zones: 'Cuisses, fessiers' },
+  { name: 'Leg curl', target: '3 séries × 12 rép', zones: 'Ischio-jambiers' },
+  { name: 'Abducteurs / Adducteurs', target: '3 séries × 15 rép', zones: 'Cuisses intérieur/extérieur' },
+  { name: 'Hip thrust guidé', target: '3 séries × 12-15 rép', zones: 'Fessiers +++' },
+  { name: 'Kickback câble cheville', target: '3 séries × 15 rép / jambe', zones: 'Grand fessier' },
+  { name: 'Crunchs (machine ou câble)', target: '3 séries × 20 rép', zones: 'Abdominaux' },
+];
+
+// ─── STORAGE ───
+function save() {
+  try { localStorage.setItem('vero_wellness', JSON.stringify(state)); } catch(e) {}
+}
+function load() {
+  try {
+    const d = localStorage.getItem('vero_wellness');
+    if (d) state = { ...state, ...JSON.parse(d) };
+  } catch(e) {}
+}
+
+// ─── UTILS ───
+function today() {
+  return new Date().toISOString().split('T')[0];
+}
+function fmtDate(d) {
+  if (!d) return '';
+  const [y,m,j] = d.split('-');
+  return `${j}/${m}/${y}`;
+}
+function toast(msg = 'Enregistré ✓') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+// ─── NAV ───
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  if (id === 'dashboard') updateDashboard();
+  if (id === 'training') initTraining();
+  if (id === 'energie') renderEnergieHistory();
+}
+
+// ─── DASHBOARD ───
+function updateDashboard() {
+  const poids = state.poids;
+  if (poids.length > 0) {
+    const last = poids[poids.length - 1];
+    const first = poids[0];
+    const actuel = parseFloat(last.poids);
+    const initial = parseFloat(first.poids);
+    const perdu = Math.max(0, initial - actuel).toFixed(1);
+    const obj = 63;
+    const totalAPerdr = initial - obj;
+    const progress = totalAPerdr > 0 ? Math.min(100, ((initial - actuel) / totalAPerdr) * 100) : 0;
+    const reste = Math.max(0, actuel - obj).toFixed(1);
+
+    document.getElementById('dash-poids-actuel').textContent = actuel.toFixed(1);
+    document.getElementById('dash-poids-perdu').textContent = perdu;
+    document.getElementById('dash-reste').textContent = `${reste} kg restants`;
+    document.getElementById('dash-progress').style.width = progress + '%';
+  }
+
+  // Sessions semaine
+  const now = new Date();
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - now.getDay() + 1);
+  monday.setHours(0,0,0,0);
+  const thisWeek = state.sessions.filter(s => new Date(s.date) >= monday);
+  document.getElementById('dash-seances').textContent = thisWeek.length;
+  document.getElementById('dash-total-seances').textContent = state.sessions.length;
+
+  // Energie hier
+  const hier = new Date(); hier.setDate(hier.getDate() - 1);
+  const hierStr = hier.toISOString().split('T')[0];
+  const e = state.energie.find(x => x.date === hierStr) || state.energie[state.energie.length - 1];
+  if (e) {
+    document.getElementById('dash-energie').textContent = e.energie || '—';
+    document.getElementById('dash-sommeil').textContent = e.sommeil || '—';
+  }
+}
+
+// ─── POIDS ───
+document.getElementById('poids-date').value = today();
+
+function savePoids() {
+  const date = document.getElementById('poids-date').value;
+  const poids = document.getElementById('poids-val').value;
+  if (!date || !poids) { toast('⚠️ Date et poids requis'); return; }
+
+  const entry = {
+    date,
+    poids: parseFloat(poids),
+    taille: document.getElementById('taille-val').value || null,
+    hanches: document.getElementById('hanches-val').value || null,
+    cuisses: document.getElementById('cuisses-val').value || null,
+    note: document.getElementById('poids-note').value || null,
+  };
+
+  const idx = state.poids.findIndex(p => p.date === date);
+  if (idx >= 0) state.poids[idx] = entry; else state.poids.push(entry);
+  state.poids.sort((a,b) => a.date.localeCompare(b.date));
+  save();
+  renderPoidsHistory();
+  document.getElementById('poids-val').value = '';
+  document.getElementById('taille-val').value = '';
+  document.getElementById('hanches-val').value = '';
+  document.getElementById('cuisses-val').value = '';
+  document.getElementById('poids-note').value = '';
+  toast('Pesée enregistrée ✓');
+}
+
+function renderPoidsHistory() {
+  const el = document.getElementById('poids-history');
+  if (state.poids.length === 0) {
+    el.innerHTML = '<div class="empty-state"><span class="icon">🌿</span>Aucune entrée pour l\'instant.</div>';
+    return;
+  }
+  const sorted = [...state.poids].reverse();
+  el.innerHTML = sorted.map(p => `
+    <div class="history-item">
+      <span class="history-date">${fmtDate(p.date)}${p.note ? ' · <em style="font-size:11px">' + p.note + '</em>' : ''}</span>
+      <div class="history-vals">
+        <span class="history-weight">${p.poids} kg</span>
+        ${p.taille || p.hanches || p.cuisses ? `<span class="history-measures">${p.taille ? 'T:'+p.taille+' ' : ''}${p.hanches ? 'H:'+p.hanches+' ' : ''}${p.cuisses ? 'C:'+p.cuisses : ''}</span>` : ''}
+        <button class="del-btn" onclick="deletePoids('${p.date}')">✕</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function deletePoids(date) {
+  state.poids = state.poids.filter(p => p.date !== date);
+  save(); renderPoidsHistory();
+}
+
+// ─── MENUS ───
+function generateMenus() {
+  const shuffled = [...RECETTES].sort(() => Math.random() - 0.5);
+  state.currentMenus = shuffled.slice(0, 10);
+  save();
+  renderMenus();
+  document.getElementById('courses-card').style.display = 'none';
+}
+
+function renderMenus() {
+  const el = document.getElementById('menus-list');
+  if (state.currentMenus.length === 0) {
+    el.innerHTML = '<div class="empty-state"><span class="icon">🌿</span>Clique sur "Générer 10 repas".</div>';
+    return;
+  }
+  el.innerHTML = state.currentMenus.map((m, i) => `
+    <div class="meal-card">
+      <div class="meal-header">
+        <span class="meal-num">Repas ${i+1}</span>
+        <span class="meal-badge">${m.type}</span>
+      </div>
+      <div class="meal-name">${m.name}</div>
+      <div class="meal-desc">${m.desc}</div>
+    </div>
+  `).join('');
+}
+
+function showCourses() {
+  if (state.currentMenus.length === 0) { toast('⚠️ Génère d\'abord tes menus'); return; }
+  const card = document.getElementById('courses-card');
+  card.style.display = 'block';
+  card.scrollIntoView({ behavior: 'smooth' });
+
+  // Agréger les ingrédients
+  const all = {};
+  state.currentMenus.forEach(m => {
+    m.courses.forEach(([item, qty]) => {
+      if (!all[item]) all[item] = [];
+      all[item].push(qty);
+    });
+  });
+
+  const el = document.getElementById('courses-list');
+  el.innerHTML = Object.entries(all).map(([item, qtys]) => `
+    <div class="course-item" id="ci-${item.replace(/\s/g,'_')}">
+      <input type="checkbox" onchange="toggleCourse(this, '${item.replace(/\s/g,'_')}')">
+      <span>${item}</span>
+      <span class="course-qty">${qtys.join(', ')}</span>
+    </div>
+  `).join('');
+}
+
+function toggleCourse(cb, id) {
+  const el = document.getElementById('ci-' + id);
+  if (cb.checked) el.classList.add('checked'); else el.classList.remove('checked');
+}
+
+// ─── ENTRAINEMENT ───
+document.getElementById('session-date').value = today();
+
+function initTraining() {
+  renderWeekDays();
+  renderExercises();
+  renderSessionsHistory();
+}
+
+function renderWeekDays() {
+  const el = document.getElementById('week-days');
+  const days = ['L','M','M','J','V','S','D'];
+  const now = new Date();
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - ((now.getDay() + 6) % 7));
+  monday.setHours(0,0,0,0);
+
+  el.innerHTML = days.map((d, i) => {
+    const date = new Date(monday);
+    date.setDate(monday.getDate() + i);
+    const dateStr = date.toISOString().split('T')[0];
+    const isDone = state.sessions.some(s => s.date === dateStr);
+    const isToday = dateStr === today();
+    return `
+      <button class="day-btn ${isDone ? 'done' : ''} ${isToday ? 'today' : ''}">
+        <span class="day-name">${d}</span>
+        <span>${date.getDate()}</span>
+        ${isDone ? '<span style="font-size:10px">✓</span>' : ''}
+      </button>
+    `;
+  }).join('');
+}
+
+function renderExercises() {
+  const el = document.getElementById('exercises-list');
+  el.innerHTML = EXERCISES.map((ex, i) => `
+    <div class="exercise-item" id="ex-${i}">
+      <div class="ex-header">
+        <div class="ex-check" onclick="toggleEx(${i})" id="excheck-${i}">✓</div>
+        <div>
+          <div class="ex-name">${ex.name}</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px">${ex.zones}</div>
+        </div>
+        <div class="ex-target">${ex.target}</div>
+      </div>
+      <div class="ex-sets">
+        <div>
+          <label>Séries réalisées</label>
+          <input type="number" id="exs-${i}" placeholder="3" min="0" max="10">
+        </div>
+        <div>
+          <label>Rép / charge</label>
+          <input type="text" id="exr-${i}" placeholder="12 rép / 40kg">
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleEx(i) {
+  const el = document.getElementById('ex-' + i);
+  el.classList.toggle('done-ex');
+}
+
+function saveSession() {
+  const date = document.getElementById('session-date').value;
+  const duration = document.getElementById('session-duration').value;
+  if (!date) { toast('⚠️ Date requise'); return; }
+
+  const exercises = EXERCISES.map((ex, i) => ({
+    name: ex.name,
+    done: document.getElementById('ex-' + i).classList.contains('done-ex'),
+    series: document.getElementById('exs-' + i).value || null,
+    details: document.getElementById('exr-' + i).value || null,
+  }));
+
+  const doneCnt = exercises.filter(e => e.done).length;
+  const session = {
+    date,
+    duration: duration ? parseInt(duration) : null,
+    exercises,
+    done_count: doneCnt,
+    notes: document.getElementById('session-notes').value || null,
+  };
+
+  const idx = state.sessions.findIndex(s => s.date === date);
+  if (idx >= 0) state.sessions[idx] = session; else state.sessions.push(session);
+  save();
+  renderWeekDays();
+  renderSessionsHistory();
+  toast(`Séance enregistrée — ${doneCnt} exercices ✓`);
+}
+
+function renderSessionsHistory() {
+  const el = document.getElementById('sessions-history');
+  if (state.sessions.length === 0) {
+    el.innerHTML = '<div class="empty-state"><span class="icon">🏋️</span>Aucune séance enregistrée.</div>';
+    return;
+  }
+  const sorted = [...state.sessions].reverse();
+  el.innerHTML = sorted.map(s => `
+    <div class="session-entry">
+      <div>
+        <div style="font-size:13px;color:var(--cream)">${fmtDate(s.date)}</div>
+        <div class="session-date">${s.done_count || 0}/${EXERCISES.length} exercices${s.notes ? ' · ' + s.notes.substring(0,30) : ''}</div>
+      </div>
+      <div class="session-info">
+        <div class="session-duration">${s.duration ? s.duration + ' min' : '—'}</div>
+        <button class="del-btn" onclick="deleteSession('${s.date}')">✕</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function deleteSession(date) {
+  state.sessions = state.sessions.filter(s => s.date !== date);
+  save(); renderWeekDays(); renderSessionsHistory();
+}
+
+// ─── ENERGIE ───
+document.getElementById('energie-date').value = today();
+
+function setStar(type, val) {
+  state.stars[type] = val;
+  const stars = document.querySelectorAll(`#stars-${type} .star`);
+  stars.forEach((s, i) => s.classList.toggle('active', i < val));
+  document.getElementById(`val-${type}`).textContent = val + ' / 5';
+}
+
+function toggleTag(el) { el.classList.toggle('active'); }
+
+function saveEnergie() {
+  const date = document.getElementById('energie-date').value;
+  if (!date) { toast('⚠️ Date requise'); return; }
+  const humeur = Array.from(document.querySelectorAll('#humeur-tags .tag.active')).map(t => t.textContent.trim());
+
+  const entry = {
+    date,
+    energie: state.stars.energie || null,
+    sommeil: state.stars.sommeil || null,
+    humeur,
+    note: document.getElementById('energie-note').value || null,
+  };
+
+  const idx = state.energie.findIndex(e => e.date === date);
+  if (idx >= 0) state.energie[idx] = entry; else state.energie.push(entry);
+  save();
+  renderEnergieHistory();
+
+  // Reset
+  state.stars = { energie: 0, sommeil: 0 };
+  ['energie','sommeil'].forEach(t => {
+    document.querySelectorAll(`#stars-${t} .star`).forEach(s => s.classList.remove('active'));
+    document.getElementById('val-' + t).textContent = '—';
+  });
+  document.querySelectorAll('#humeur-tags .tag').forEach(t => t.classList.remove('active'));
+  document.getElementById('energie-note').value = '';
+  toast('Ressenti enregistré ✓');
+}
+
+function renderEnergieHistory() {
+  const el = document.getElementById('energie-history');
+  if (state.energie.length === 0) {
+    el.innerHTML = '<div class="empty-state"><span class="icon">💫</span>Commence à noter ton énergie.</div>';
+    return;
+  }
+  const last7 = [...state.energie].sort((a,b) => b.date.localeCompare(a.date)).slice(0, 7);
+  el.innerHTML = last7.map(e => `
+    <div class="history-item">
+      <div>
+        <div style="font-size:13px;color:var(--cream)">${fmtDate(e.date)}</div>
+        ${e.humeur && e.humeur.length ? `<div style="margin-top:3px">${e.humeur.join(' ')}</div>` : ''}
+        ${e.note ? `<div style="font-size:11px;color:var(--muted);margin-top:2px">${e.note}</div>` : ''}
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:12px;color:var(--muted)">Énergie ${e.energie ? '★'.repeat(e.energie) : '—'}</div>
+        <div style="font-size:12px;color:var(--muted)">Sommeil ${e.sommeil ? '★'.repeat(e.sommeil) : '—'}</div>
+        <button class="del-btn" onclick="deleteEnergie('${e.date}')">✕</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function deleteEnergie(date) {
+  state.energie = state.energie.filter(e => e.date !== date);
+  save(); renderEnergieHistory();
+}
+
+// ─── INIT ───
+load();
+const now = new Date();
+document.getElementById('today-date').textContent = now.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' });
+renderPoidsHistory();
+if (state.currentMenus.length > 0) renderMenus();
+updateDashboard();
+</script>
+</body>
+</html>
