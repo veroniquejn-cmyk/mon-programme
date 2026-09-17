@@ -40,6 +40,8 @@ export interface QuadrantInfo {
   phaseLune: string;
   /** Titre court de l'énergie dominante */
   energieTitre: string;
+  /** L'émotion à laquelle cette phase connecte, reprise des schémas d'origine */
+  emotion: string;
   /** Recommandation d'action principale */
   action: string;
   /** Description plus longue de l'action recommandée */
@@ -58,6 +60,7 @@ export const WHEEL: Record<QuadrantId, QuadrantInfo> = {
     archetype: 'Femme sauvage',
     phaseLune: 'Nouvelle lune',
     energieTitre: 'Énergie réflective',
+    emotion: 'Connectée aux émotions à être transmutées',
     action: 'Se reposer',
     actionDetail:
       "Ralentis, écoute-toi, retire-toi si besoin. C'est le moment d'observer, de faire le bilan et d'apprendre de ce qui vient de se passer plutôt que d'agir.",
@@ -73,6 +76,7 @@ export const WHEEL: Record<QuadrantId, QuadrantInfo> = {
     archetype: 'Vierge',
     phaseLune: 'Premier quartier',
     energieTitre: 'Énergie créative',
+    emotion: 'Connectée aux émotions du jeu et des possibilités',
     action: 'Créer un projet',
     actionDetail:
       "Explore, imagine, lance de nouvelles idées. L'énergie monte : c'est le bon moment pour semer, initier, oser des choses nouvelles.",
@@ -88,6 +92,7 @@ export const WHEEL: Record<QuadrantId, QuadrantInfo> = {
     archetype: 'Femme / Mère',
     phaseLune: 'Pleine lune',
     energieTitre: 'Énergie action dynamique',
+    emotion: "Connectée aux émotions de l'action",
     action: 'Agir',
     actionDetail:
       "Rayonne, communique, concrétise. C'est le pic d'énergie du cycle : le moment idéal pour te dépasser, présenter, décider, avancer.",
@@ -103,6 +108,7 @@ export const WHEEL: Record<QuadrantId, QuadrantInfo> = {
     archetype: 'Femme sage',
     phaseLune: 'Dernier quartier',
     energieTitre: 'Énergie de transformation',
+    emotion: 'Connectée aux émotions de la sagesse',
     action: 'Se libérer',
     actionDetail:
       "Trie, termine, transmets. C'est le moment de lâcher-prise sur ce qui ne sert plus, de transmuter et de refermer les boucles avant le repos.",

@@ -15,23 +15,6 @@ export function Label({ children }: { children: React.ReactNode }) {
   return <Text style={styles.label}>{children}</Text>;
 }
 
-export function DateField(props: TextInputProps & { label: string }) {
-  const { label, ...rest } = props;
-  return (
-    <View style={styles.fieldGroup}>
-      <Label>{label}</Label>
-      <TextInput
-        style={styles.input}
-        placeholder="AAAA-MM-JJ"
-        placeholderTextColor={colors.muted}
-        autoCapitalize="none"
-        autoCorrect={false}
-        {...rest}
-      />
-    </View>
-  );
-}
-
 export function NumberField(props: TextInputProps & { label: string }) {
   const { label, ...rest } = props;
   return (

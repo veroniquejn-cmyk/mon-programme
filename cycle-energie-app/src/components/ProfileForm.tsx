@@ -5,7 +5,8 @@ import { StoredProfile } from '../storage/profile';
 import { colors } from '../theme/colors';
 import { typography } from '../theme/typography';
 import { isValidISODate } from '../utils/validateDate';
-import { Card, CardTitle, DateField, NumberField, PrimaryButton } from './ui';
+import { Card, CardTitle, NumberField, PrimaryButton } from './ui';
+import { WheelDateField } from './WheelDateField';
 
 interface Props {
   initial?: StoredProfile;
@@ -43,7 +44,13 @@ export function ProfileForm({ initial, submitLabel, onSubmit }: Props) {
     <>
       <Card>
         <CardTitle>🌙 Ta date de naissance</CardTitle>
-        <DateField label="Date de naissance" value={birthDate} onChangeText={setBirthDate} />
+        <WheelDateField
+          label="Date de naissance"
+          value={birthDate}
+          onChangeValue={setBirthDate}
+          maximumDate={new Date()}
+          minimumDate={new Date(1900, 0, 1)}
+        />
       </Card>
 
       <Card>
@@ -58,10 +65,12 @@ export function ProfileForm({ initial, submitLabel, onSubmit }: Props) {
         </View>
         {hasCycle ? (
           <>
-            <DateField
+            <WheelDateField
               label="Début des dernières règles"
               value={lastPeriodStart}
-              onChangeText={setLastPeriodStart}
+              onChangeValue={setLastPeriodStart}
+              maximumDate={new Date()}
+              minimumDate={new Date(new Date().getFullYear() - 1, 0, 1)}
             />
             <View style={styles.row}>
               <View style={styles.half}>
