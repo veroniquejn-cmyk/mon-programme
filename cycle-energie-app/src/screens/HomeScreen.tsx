@@ -4,7 +4,7 @@ import { ElementBadge } from '../components/ElementBadge';
 import { Card, CardTitle, SecondaryButton } from '../components/ui';
 import { toUserProfile } from '../engine/profileAdapter';
 import { computeSynthesis, ParamKey, ParamResult } from '../engine/synthesis';
-import { getVerdictText } from '../engine/verdict';
+import { getVerdict, VerdictCategory } from '../engine/verdict';
 import { StoredProfile } from '../storage/profile';
 import { colors, elementColor } from '../theme/colors';
 import { energieIcon, energieLabel } from '../theme/icons';
@@ -23,11 +23,19 @@ const PARAM_ICON: Record<ParamKey, string> = {
   saison: '🍃',
 };
 
+const VERDICT_META: Record<VerdictCategory, { icon: string; label: string; color: string }> = {
+  harmonieuse: { icon: '✓', label: 'Harmonieuse', color: colors.green },
+  equilibree: { icon: '⚖️', label: 'Équilibrée', color: colors.gold },
+  disharmonieuse: { icon: '🌗', label: 'Disharmonieuse', color: colors.orange },
+};
+
 export function HomeScreen({ profile, onOpenSettings, onOpenPremium }: Props) {
   const today = useMemo(() => new Date(), []);
   const userProfile = useMemo(() => toUserProfile(profile), [profile]);
   const synthesis = useMemo(() => computeSynthesis(userProfile, today), [userProfile, today]);
   const { macro, micro, aligned, params } = synthesis;
+  const verdict = useMemo(() => getVerdict(macro, micro, aligned), [macro, micro, aligned]);
+  const verdictMeta = VERDICT_META[verdict.category];
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -94,9 +102,16 @@ export function HomeScreen({ profile, onOpenSettings, onOpenPremium }: Props) {
         <Text style={styles.tierAction}>{micro.info.action} : {micro.info.actionDetail}</Text>
       </Card>
 
-      <Card style={styles.verdictCard}>
-        <CardTitle>✨ Le bilan du jour</CardTitle>
-        <Text style={styles.verdictText}>{getVerdictText(macro, micro, aligned)}</Text>
+      <Card style={[styles.verdictCard, { borderColor: verdictMeta.color }]}>
+        <View style={styles.verdictHeader}>
+          <CardTitle>✨ Le bilan du jour</CardTitle>
+          <View style={[styles.verdictBadge, { borderColor: verdictMeta.color }]}>
+            <Text style={[styles.verdictBadgeText, { color: verdictMeta.color }]}>
+              {verdictMeta.icon} {verdictMeta.label}
+            </Text>
+          </View>
+        </View>
+        <Text style={styles.verdictText}>{verdict.text}</Text>
       </Card>
 
       <Card style={styles.premiumCard}>
@@ -190,7 +205,10 @@ const styles = StyleSheet.create({
   tierEnergie: { ...typography.body, fontSize: 12, color: colors.gold, marginTop: 2 },
   tierAction: { ...typography.body, color: colors.text, fontSize: 13, lineHeight: 19 },
   tieNote: { ...typography.body, fontSize: 11, color: colors.muted, marginBottom: 8, lineHeight: 16 },
-  verdictCard: { borderColor: colors.gold, borderWidth: 1.5 },
+  verdictCard: { borderWidth: 1.5 },
+  verdictHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10, flexWrap: 'wrap', gap: 6 },
+  verdictBadge: { borderWidth: 1, borderRadius: 20, paddingVertical: 3, paddingHorizontal: 10 },
+  verdictBadgeText: { fontSize: 11, fontWeight: '600' },
   verdictText: { ...typography.body, color: colors.text, fontSize: 14, lineHeight: 21 },
   premiumCard: { borderColor: colors.gold, borderStyle: 'dashed' },
   helper: { ...typography.body, color: colors.muted, fontSize: 12, lineHeight: 18, marginBottom: 12 },
