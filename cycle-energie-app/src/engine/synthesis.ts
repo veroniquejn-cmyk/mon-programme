@@ -60,7 +60,7 @@ export const PARAM_PRIORITY: ParamKey[] = ['cycle', 'lune', 'trimestre', 'saison
  * paramètres pointent vers le même quadrant, pas de conflit. Sinon, le
  * premier de la liste (le plus prioritaire) tranche.
  */
-function resolveTier(itemsByPriority: ParamResult[]): TierResult {
+export function resolveTier(itemsByPriority: ParamResult[]): TierResult {
   const [primary, secondary] = itemsByPriority;
   if (!secondary || primary.quadrant === secondary.quadrant) {
     return { quadrant: primary.quadrant, info: primary.info, isTie: false };
