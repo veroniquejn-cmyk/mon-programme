@@ -1,7 +1,7 @@
 import { computeSynthesis } from '../synthesis';
 
 describe('computeSynthesis', () => {
-  it('combine les 4 paramètres et désigne un quadrant dominant', () => {
+  it('calcule les 4 paramètres et les deux niveaux (contexte de fond / nuance du jour)', () => {
     const profile = {
       birthDate: new Date(Date.UTC(1990, 5, 10)),
       cycle: {
@@ -14,58 +14,90 @@ describe('computeSynthesis', () => {
 
     expect(result.params).toHaveLength(4);
     expect(result.params.map((p) => p.key).sort()).toEqual(['cycle', 'lune', 'saison', 'trimestre'].sort());
-    expect(result.dominants.length).toBeGreaterThanOrEqual(1);
-    expect(result.dominant).toBeDefined();
+    expect(result.macro).toBeDefined();
+    expect(result.micro).toBeDefined();
+    expect(typeof result.aligned).toBe('boolean');
   });
 
-  it('fonctionne sans profil de cycle menstruel (3 paramètres à poids égal)', () => {
+  it('fonctionne sans profil de cycle menstruel (nuance du jour = phase lunaire seule)', () => {
     const profile = { birthDate: new Date(Date.UTC(1990, 5, 10)) };
     const result = computeSynthesis(profile, new Date(Date.UTC(2026, 0, 3)));
     expect(result.params).toHaveLength(3);
     expect(result.params.find((p) => p.key === 'cycle')).toBeUndefined();
+    expect(result.micro.isTie).toBe(false);
+    expect(result.micro.tieBreakParam).toBeUndefined();
   });
 
-  it("sans égalité, le quadrant majoritaire l'emporte directement (pas de tieBreakParam)", () => {
-    // saison de janvier -> 0, lune -> 0 (nouvelle lune), trimestre -> 0 (juste après anniversaire)
-    const profile = { birthDate: new Date(Date.UTC(2000, 0, 6, 18, 14)) }; // aligné sur la nouvelle lune de référence
-    const result = computeSynthesis(profile, new Date(Date.UTC(2026, 0, 6, 18, 14)));
-    expect(result.isTie).toBe(false);
-    expect(result.dominant.id).toBe(0);
-    expect(result.tieBreakParam).toBeUndefined();
+  it('contexte de fond : pas de conflit quand saison et trimestre de vie s\'accordent', () => {
+    // À l'instant de la nouvelle lune de référence, en janvier : saison = 0 (Hiver).
+    // Naissance le jour même -> 0 mois écoulé -> trimestre = 0 aussi.
+    const today = new Date(Date.UTC(2000, 0, 6, 18, 14));
+    const profile = { birthDate: new Date(Date.UTC(2000, 0, 6, 18, 14)) };
+    const result = computeSynthesis(profile, today);
+
+    expect(result.macro.isTie).toBe(false);
+    expect(result.macro.quadrant).toBe(0);
+    expect(result.macro.tieBreakParam).toBeUndefined();
   });
 
-  it('en cas d\'égalité, priorise le cycle menstruel sur les autres paramètres', () => {
-    // À l'instant de la nouvelle lune de référence : saison(janvier)=0, lune=0.
-    // Naissance 6 mois avant -> trimestre de vie = 2. Cycle réglé pour tomber
-    // en ovulation (jour 14/28) -> cycle = 2. Résultat : 2 voix pour le
-    // quadrant 0 (saison+lune), 2 voix pour le quadrant 2 (trimestre+cycle).
+  it('contexte de fond : en cas de désaccord, le trimestre de vie prime sur la saison', () => {
+    // saison(janvier) = 0. Naissance 3 mois avant -> trimestre = 1.
+    const today = new Date(Date.UTC(2000, 0, 6, 18, 14));
+    const profile = { birthDate: new Date(Date.UTC(1999, 9, 6, 18, 14)) };
+    const result = computeSynthesis(profile, today);
+
+    expect(result.macro.isTie).toBe(true);
+    expect(result.macro.tieBreakParam).toBe('trimestre');
+    expect(result.macro.quadrant).toBe(1);
+  });
+
+  it('nuance du jour : en cas de désaccord, le cycle menstruel prime sur la phase lunaire', () => {
+    // À l'instant de référence : lune = 0 (nouvelle lune).
+    // Cycle réglé pour tomber en ovulation (jour 14/28) -> cycle = 2.
     const today = new Date(Date.UTC(2000, 0, 6, 18, 14));
     const profile = {
-      birthDate: new Date(Date.UTC(1999, 6, 6, 18, 14)), // 6 mois avant -> trimestre = 2
+      birthDate: new Date(Date.UTC(1990, 5, 10)),
       cycle: {
-        lastPeriodStart: new Date(Date.UTC(1999, 11, 24, 18, 14)), // 13 jours avant -> jour de cycle 14 -> ovulation
+        lastPeriodStart: new Date(Date.UTC(1999, 11, 24, 18, 14)),
         cycleLength: 28,
         periodLength: 5,
       },
     };
     const result = computeSynthesis(profile, today);
 
-    expect(result.isTie).toBe(true);
-    expect(result.dominants.sort()).toEqual([0, 2]);
-    // Le cycle est prioritaire (1er de PARAM_PRIORITY) et vote pour le quadrant 2.
-    expect(result.tieBreakParam).toBe('cycle');
-    expect(result.dominant.id).toBe(2);
+    expect(result.micro.isTie).toBe(true);
+    expect(result.micro.tieBreakParam).toBe('cycle');
+    expect(result.micro.quadrant).toBe(2);
   });
 
-  it("sans cycle renseigné, priorise la phase lunaire en cas d'égalité", () => {
-    // Combinaison vérifiée : saison=0, lune=3, trimestre=1 (naissance 3 mois avant) -> 3 voix distinctes, 1 chacune.
-    const today = new Date(Date.UTC(2024, 0, 1, 12, 0));
-    const profile = { birthDate: new Date(Date.UTC(2023, 9, 1)) };
+  it('aligned = true quand le contexte de fond et la nuance du jour partagent la même énergie', () => {
+    // saison=0, trimestre=2 (naissance 6 mois avant) -> macro tranché sur trimestre = quadrant 2 (masculine).
+    // lune=0, cycle=2 (ovulation) -> micro tranché sur cycle = quadrant 2 (masculine).
+    const today = new Date(Date.UTC(2000, 0, 6, 18, 14));
+    const profile = {
+      birthDate: new Date(Date.UTC(1999, 6, 6, 18, 14)),
+      cycle: {
+        lastPeriodStart: new Date(Date.UTC(1999, 11, 24, 18, 14)),
+        cycleLength: 28,
+        periodLength: 5,
+      },
+    };
     const result = computeSynthesis(profile, today);
 
-    expect(result.isTie).toBe(true);
-    expect(result.dominants.sort()).toEqual([0, 1, 3]);
-    expect(result.tieBreakParam).toBe('lune');
-    expect(result.dominant.id).toBe(3);
+    expect(result.macro.quadrant).toBe(2);
+    expect(result.micro.quadrant).toBe(2);
+    expect(result.aligned).toBe(true);
+  });
+
+  it('aligned = false quand le contexte de fond et la nuance du jour divergent', () => {
+    // saison=0 (feminine), trimestre=1 (naissance 3 mois avant, masculine) -> macro = quadrant 1 (masculine).
+    // Sans cycle renseigné -> micro = lune seule = quadrant 0 (feminine).
+    const today = new Date(Date.UTC(2000, 0, 6, 18, 14));
+    const profile = { birthDate: new Date(Date.UTC(1999, 9, 6, 18, 14)) };
+    const result = computeSynthesis(profile, today);
+
+    expect(result.macro.info.energie).toBe('masculine');
+    expect(result.micro.info.energie).toBe('feminine');
+    expect(result.aligned).toBe(false);
   });
 });

@@ -6,15 +6,9 @@
  * 0-3, puis on lit ici les attributs (élément, énergie, archétype, action...)
  * associés à ce quadrant.
  *
- * ⚠️ À RELIRE PAR VÉRONIQUE : cette table est ma meilleure lecture des deux
- * schémas photographiés (roue "Nature cyclique - Énergie & Émotions" et roue
- * "Nature cyclique - Énergie féminine"). Le modèle sous-jacent (Vierge =
- * pré-ovulation/printemps, Mère = ovulation/été, Femme sage = pré-menstruation
- * /automne, Femme sauvage = menstruation/hiver) correspond au modèle classique
- * des 4 archétypes du cycle féminin. Si un libellé, une couleur d'énergie ou
- * une action ne correspond pas à ton intention, il suffit de corriger les
- * objets ci-dessous : tout le reste de l'app (calculs, écrans) en dépend
- * automatiquement.
+ * Modèle des 4 archétypes du cycle féminin (confirmé par Véronique) :
+ * Vierge = pré-ovulation/printemps, Femme/Mère = ovulation/été,
+ * Femme sauvage = pré-menstruation/automne, Femme sage = menstruation/hiver.
  */
 
 import { ElementKey } from '../theme/colors';
@@ -57,10 +51,10 @@ export const WHEEL: Record<QuadrantId, QuadrantInfo> = {
     element: 'terre',
     energie: 'feminine',
     phaseVie: 'Apprentissage',
-    archetype: 'Femme sauvage',
+    archetype: 'Femme sage',
     phaseLune: 'Nouvelle lune',
     energieTitre: 'Énergie réflective',
-    emotion: 'Connectée aux émotions à être transmutées',
+    emotion: 'Connectée aux émotions de la sagesse',
     action: 'Se reposer',
     actionDetail:
       "Ralentis, écoute-toi, retire-toi si besoin. C'est le moment d'observer, de faire le bilan et d'apprendre de ce qui vient de se passer plutôt que d'agir.",
@@ -105,10 +99,10 @@ export const WHEEL: Record<QuadrantId, QuadrantInfo> = {
     element: 'eau',
     energie: 'feminine',
     phaseVie: 'Maîtrise',
-    archetype: 'Femme sage',
+    archetype: 'Femme sauvage',
     phaseLune: 'Dernier quartier',
     energieTitre: 'Énergie de transformation',
-    emotion: 'Connectée aux émotions de la sagesse',
+    emotion: 'Connectée aux émotions à être transmutées',
     action: 'Se libérer',
     actionDetail:
       "Trie, termine, transmets. C'est le moment de lâcher-prise sur ce qui ne sert plus, de transmuter et de refermer les boucles avant le repos.",
