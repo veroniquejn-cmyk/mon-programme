@@ -1,8 +1,7 @@
 # Cycle Énergie — roue cyclique féminine
 
 Application mobile (Expo / React Native / TypeScript) qui calcule, chaque
-jour, la phase d'énergie de l'utilisatrice à partir de 4 paramètres pris à
-poids égal :
+jour, la phase d'énergie de l'utilisatrice à partir de 4 paramètres :
 
 1. **Cycle menstruel** (jour du cycle, ou absent si non renseigné)
 2. **Saison réelle** (météorologique, hémisphère nord)
@@ -10,24 +9,27 @@ poids égal :
 4. **Trimestre depuis la naissance** (cycle perpétuel de 4 phases de 3 mois,
    ancré sur la date de naissance)
 
-Chacun de ces paramètres "vote" pour l'un des 4 quadrants d'une roue
+Chacun de ces paramètres pointe vers l'un des 4 quadrants d'une roue
 cyclique (Menstruation/Hiver/Apprentissage, Pré-ovulation/Printemps/Création,
-Ovulation/Été/Récolte, Pré-menstruation/Automne/Maîtrise). Le quadrant
-majoritaire donne l'énergie dominante (féminine/masculine), l'élément
-(feu/air/terre/eau) et l'action recommandée du jour (agir, créer, se
-reposer, se libérer...).
+Ovulation/Été/Récolte, Pré-menstruation/Automne/Maîtrise), qui donne
+l'énergie (féminine/masculine), l'élément (feu/air/terre/eau), l'archétype,
+l'émotion associée et l'action recommandée.
 
-## ⚠️ À relire en priorité : `src/engine/wheel.ts`
+Plutôt qu'un simple vote à 4, la synthèse (`src/engine/synthesis.ts`)
+distingue deux niveaux, pour que le cycle du jour ne puisse jamais faire
+oublier la tendance de fond :
 
-Le contenu (libellés, associations élément/énergie/action) est ma meilleure
-lecture des deux schémas photographiés ("Nature cyclique – Énergie &
-Émotions" et "Nature cyclique – Énergie féminine"). Le modèle sous-jacent
-(Vierge = pré-ovulation, Mère = ovulation, Femme sage = pré-menstruation,
-Femme sauvage = menstruation) correspond au modèle classique des 4
-archétypes du cycle féminin, mais **c'est à toi de confirmer ou corriger**
-chaque libellé et chaque action dans ce fichier : tout le reste de l'app
-(calculs, écrans) en dépend automatiquement, aucun autre fichier à modifier
-pour ça.
+- **Contexte de fond** (saison + trimestre de vie) : la tendance lente,
+  toujours affichée en premier.
+- **Nuance du jour** (cycle menstruel + phase lunaire) : la coloration du
+  moment présent, qui vient nuancer le contexte de fond sans jamais le
+  contredire sur les grandes décisions.
+
+Le bilan du jour (`src/engine/verdict.ts`) articule les deux et les
+classe en **harmonieuse** / **équilibrée** / **disharmonieuse** selon
+qu'ils s'accordent pleinement, partiellement, ou pas du tout. La table
+`src/engine/wheel.ts` (libellés, archétypes, émotions, actions) a été
+relue et corrigée avec Véronique.
 
 ## Structure du projet
 
@@ -112,11 +114,35 @@ est prêt à les recevoir dès que c'est fait.
 
 ## Prochaines étapes possibles
 
-- Relire/ajuster `src/engine/wheel.ts` (priorité).
 - Ajouter une icône et un splash screen personnalisés dans `assets/`.
-- Remplacer les champs de date texte par un vrai sélecteur de date natif
-  (`@react-native-community/datetimepicker`).
-- Historique des résultats jour par jour, notifications de changement de
-  phase, contenu détaillé par phase (rituels, méditations...).
 - Intégrer les polices Cormorant Garamond / DM Sans via `expo-font`, pour
   retrouver exactement l'identité visuelle de l'app "Mon Programme".
+- Notifications de changement de phase, contenu détaillé par phase
+  (rituels, méditations...).
+
+### Journal quotidien (en attente d'une décision sur les comptes)
+
+Idée retenue avec Véronique : permettre à l'utilisatrice de noter comment
+elle se sent / ce qu'elle a vécu chaque jour, en lien avec son énergie du
+jour calculée par l'app. Volontairement **pas encore construit**, en
+attente d'une décision sur l'architecture de compte (nécessaire de toute
+façon pour restaurer un abonnement sur un nouvel appareil) :
+
+- **Sans compte (aujourd'hui)** : les entrées pourraient être stockées en
+  local (AsyncStorage, comme le profil), perdues si l'app est désinstallée
+  ou si on change de téléphone.
+- **Avec compte (à concevoir)** : nécessite de choisir une authentification
+  (email/mot de passe, ou Sign in with Apple/Google — souvent exigé par
+  Apple si l'app propose une connexion par compte) et un service de
+  stockage cloud pour synchroniser le journal (et potentiellement le
+  profil) entre appareils. Options courantes avec Expo : Supabase ou
+  Firebase, tous deux avec un plan gratuit suffisant pour démarrer.
+- Ce choix de compte a aussi un impact sur l'abonnement : un compte permet
+  de retrouver son abonnement premium sur un nouvel appareil (sinon,
+  StoreKit/Play Billing seuls permettent une restauration basique liée à
+  l'identifiant Apple/Google, mais sans synchroniser les données comme le
+  journal).
+
+À trancher ensemble avant de coder cette partie : quelle authentification,
+quel service de stockage, et si le journal doit être une fonctionnalité
+gratuite ou réservée à l'abonnement.
